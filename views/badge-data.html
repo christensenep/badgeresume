@@ -1,0 +1,61 @@
+<table class='information'>
+  <colgroup>
+    <col class="imageCol">
+    <col class="fieldLabelCol">
+    <col class="dataCol">
+  </colgroup>
+  <tbody>
+  <tr>
+    <td rowspan="100" class='image'>
+      <img src="{{ badge.attributes.imageUrl }}">
+    </td>
+
+    <td class='section-head' colspan='2'>Badge Details</td>
+  </tr>
+
+  <tr>
+    <td class='fieldlabel'>Description</td>
+    <td class="popups">{{badge.attributes.assertion.badge.description|escape}}</td>
+  </tr>
+
+  {% if badge.attributes.assertion.evidence %}
+  <tr>
+    <td class='fieldlabel evidence'>Evidence</td>
+    <td class="popups"><a href='{{badge.attributes.assertion.evidence}}'>{{badge.attributes.assertion.evidence}}</a></td>
+  </tr>
+  {% endif %}
+  {% if badge.attributes.assertion.issued_on %}
+  <tr>
+    <td class='fieldlabel'>Issued</td>
+    <td class="popups">{{badge.attributes.assertion.issued_on|formatdate}}</td>
+  </tr>
+  {% endif %}
+  {% if badge.attributes.assertion.expires %}
+  <tr>
+    <td class='fieldlabel'>Expiration</td>
+    <td class="popups">{{badge.attributes.assertion.expires|formatdate}}</td>
+  </tr>
+  {% endif %}
+  <br>
+  <tr>
+    <td class='section-head' colspan='2'>Issuer Details</td>
+  </tr>
+
+  <tr>
+    <td class='fieldlabel issuer-name'>Name</td>
+    <td class="popups">{{badge.attributes.assertion.badge.issuer.name}}</td>
+  </tr>
+  <tr>
+    <td class='fieldlabel issuer-name'>URL</td>
+    <td class="popups"><a href="{{badge.attributes.assertion.badge.issuer.origin}}">{{badge.attributes.assertion.badge.issuer.origin}}</a></td>
+  </tr>
+  {% if badge.attributes.assertion.badge.issuer.org %}
+  <tr>
+    <td class='fieldlabel issuer-name'>Organization</td>
+    <td class="popups">{{badge.attributes.assertion.badge.issuer.org}}</td>
+  </tr>
+  {% endif %}
+
+  </tbody>
+</table>
+

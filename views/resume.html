@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+
+<head>
+
+  <title>Erik Christensen | Software Developer | christensenep@gmail.com</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+
+  <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" media="all" />
+  <link rel="stylesheet" type="text/css" href="/css/resume.css" media="all" />
+
+</head>
+<body>
+
+<div id="doc4" class="yui-t7">
+  <div id="inner">
+
+    <div id="hd">
+      <div class="yui-gc">
+        <div class="yui-u first">
+          <h1>{{ resumeData.fullName }}</h1>
+          <h2>Software Developer</h2>
+        </div>
+
+        <div class="yui-u">
+          <div class="contact-info">
+            <h3><a id="pdf" href="/resume.pdf">View PDF Resume</a></h3>
+            <h3><a href="mailto:christensenep@gmail.com">christensenep@gmail.com</a></h3>
+            <h3>(615) - 509-7003</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div id="categories" class="yui-b">
+          {% for category in resumeData.categories %}
+
+          <div class="category yui-gf {% if loop.last %}last{% endif %}" data-id="{{category.id}}">
+            <div class="yui-u first">
+              <h2 class="categoryName">{{ category.name }}</h2>
+            </div>
+
+            <div class="yui-u">
+              <div id="{{class.name}}" class="collectiondisplay">
+                <table class="badgetable">
+
+                  {% for row in category.badges | batch(4, 'filler') %}
+                  <tr>
+                    {% for badge in row %}
+                    {% if badge == 'filler' %}
+                    <td></td>
+                    {% else %}
+                    <td class="badge" data-id="{{ badge.id }}" align="center" style="cursor: pointer">
+                      <img src="{{ badge.imageUrl }}" width="125" height="125" border="0"/><br />{{ badge.name }}
+                    </td>
+                    {% endif %}
+                    {% endfor %}
+                  </tr>
+                  {% endfor %}
+
+                </table>
+              </div>
+            </div>
+          </div>
+
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="ft">
+    <p>Erik Christensen &mdash; <a href="mailto:christensenep@gmail.com">christensenep@gmail.com</a> &mdash; (615) - 509-7003</p>
+  </div>
+
+</div>
+</body>
+
+<script>
+  !!function(){
+    window.badgeData = {};
+    {% for badge in resumeData.badges %}
+      window.badgeData[{{badge.id}}] = {{badge.serializedAttributes}};
+    {% endfor %}
+  }();
+</script>
+
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/js/nunjucks-dev.js"></script>
+<script type="text/javascript" src="/js/underscore.js"></script>
+<script type="text/javascript" src="/js/backbone.js"></script>
+<script type="text/javascript" src="/js/resume.js"></script>
+
+</html>
+

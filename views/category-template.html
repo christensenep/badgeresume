@@ -1,0 +1,12 @@
+<div class="yui-gf {% if loop.last %}last{% endif %}">
+    <div class="yui-u first">
+        <h2>{{ category.name }} </h2>
+    </div>
+
+    {% for class in category.classes %}
+    <div class="yui-u">
+        <div id="{{class.name}}" class="collectiondisplay"></div>
+    </div>
+    {% endfor %}
+
+</div>

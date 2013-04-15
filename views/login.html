@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<script type="text/javascript" src="https://login.persona.org/include.js"></script>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+
+<body class="login">
+<h1 class="title">Welcome to your Resume</h1>
+<p class="subtitle">Let's rock.</p>
+<a class="persona-button dark big js-browserid-link" href="#"><span>Log In or Sign Up</span></a>
+
+<form class="signin js-browserid-form" method="POST" action="/authenticate">
+  <input class="js-browserid-input" name="assertion" type="hidden"></input>
+  <input name="_csrf" type="hidden" value="{{ csrfToken }}"></input>
+</form>
+
+
+<script type="text/javascript">
+  !!function loginHandler () {
+//begin login handler
+
+    function launchBrowserId(callback) {
+      return function() { navigator.id.get(callback, {
+        siteName: 'Badge Resume',
+        //termsOfService: '/tou.html',
+        //privacyPolicy: '/privacy.html',
+        returnTo: '/'
+      }); }
+    }
+    function handleResponse(assertion) {
+      if (!assertion) return false;
+      $('.js-browserid-input').val(assertion);
+      $('.js-browserid-form').trigger('submit');
+    }
+    $('.js-browserid-link').bind('click', launchBrowserId(handleResponse));
+
+//begin login handler scope
+  }();
+</script>
+</body>
