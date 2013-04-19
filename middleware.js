@@ -5,6 +5,7 @@ var logger = require('./lib/logging').logger;
 var crypto = require('crypto');
 var User = require('./models/user');
 var path = require('path');
+var lessMiddleware = require('less-middleware');
 var _ = require('underscore');
 
 // `COOKIE_SECRET` is randomly generated on the first run of the server,
@@ -163,9 +164,9 @@ exports.notFound = function notFound() {
 exports.less = function less(env) {
   var base = {
     src: path.join(__dirname, "static/less"),
-    paths: [path.join(__dirname, "static/vendor/bootstrap/less")],
+//    paths: [path.join(__dirname, "static/vendor/bootstrap/less")],
     dest: path.join(__dirname, "static/css"),
-    prefix: '/css',
+    prefix: '/css'
   };
   var config = configuration.get('less') || {};
   return lessMiddleware(_.defaults(base, config));

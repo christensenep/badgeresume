@@ -11,9 +11,13 @@
 
   <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" media="all" />
   <link rel="stylesheet" type="text/css" href="/css/resume.css" media="all" />
-
+  <link rel="stylesheet" href="/css/resume.min.css" type="text/css" media="all" />
 </head>
 <body>
+
+<form style="display: none" action=''>
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+</form>
 
 <div id="doc4" class="yui-t7">
   <div id="inner">
@@ -39,16 +43,13 @@
       <div id="yui-main">
         <div id="categories" class="yui-b">
           {% for category in resumeData.categories %}
-
           <div class="category yui-gf {% if loop.last %}last{% endif %}" data-id="{{category.id}}">
-            <div class="yui-u first">
-              <h2 class="categoryName">{{ category.name }}</h2>
-            </div>
-
+            <input class='categoryName' type='text' value='{{ category.name }}'/>
+            <div class="yui-u first"></div>
             <div class="yui-u">
               <div id="{{class.name}}" class="collectiondisplay">
                 <table class="badgetable">
-
+                  <tr height="15"></tr>
                   {% for row in category.badges | batch(4, 'filler') %}
                   <tr>
                     {% for badge in row %}

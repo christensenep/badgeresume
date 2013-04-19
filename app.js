@@ -19,6 +19,7 @@ app.locals({
 var env = new nunjucks.Environment(new nunjucks.FileSystemLoader(__dirname + '/views'));
 env.express(app);
 
+app.use(middleware.less(app.get('env')));
 app.use(express.static(path.join(__dirname + '/static')));
 app.use('/views', express.static(path.join(__dirname + '/views')));
 app.use(middleware.noFrame({ whitelist: [ ] }));
@@ -40,9 +41,18 @@ app.use(app.router);
 app.use(express.errorHandler());
 
 const resume = require('./controllers/resume');
+const category = require('./controllers/category');
+
+app.param('categoryId', category.findById);
 
 app.get('/', resume.show);
 app.get('/login', resume.login);
 app.post('/authenticate', resume.authenticate);
 app.get('/resume/:userId', resume.showStatic);
+
+//app.put('/resume/:userId', resume.update);
+
+//app.post('/category', category.create);
+app.put('/category/:categoryId', category.update);
+
 app.listen(8080);

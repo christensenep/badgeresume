@@ -12,6 +12,7 @@
     "mysql": "~0.9.5",
     "connect-flash": "0.1.0",
     "request": "~2.9.200",
-    "async": "~0.2.7"
+    "async": "~0.2.7",
+    "less-middleware": "0.1.11"
   }
 }

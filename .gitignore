@@ -1,0 +1,10 @@
+
+/.bash_history
+/.idea
+/node_modules
+
+/var/*
+!/var/.gitkeep
+
+/static/css/*.css
+/static/*.pdf

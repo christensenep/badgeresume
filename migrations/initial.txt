@@ -7,6 +7,17 @@
     salt             TINYBLOB
   ) ENGINE=InnoDB;
 
+  CREATE TABLE IF NOT EXISTS `resume` (
+    id               BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id          BIGINT,
+    name             VARCHAR(255),
+    title            VARCHAR(255),
+    display_email    VARCHAR(255),
+    phone            VARCHAR(255),
+    FOREIGN KEY (user_id) REFERENCES user(id)
+      ON DELETE RESTRICT ON UPDATE CASCADE
+  ) ENGINE=InnoDB;
+
   CREATE TABLE IF NOT EXISTS `category` (
     id               BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id          BIGINT,

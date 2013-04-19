@@ -3,6 +3,17 @@ var numColumns = 4;
 var backpackSite = 'beta.openbadges.org'
 var userUrl = 'http://' + backpackSite + '/displayer/' + userID + '/groups.json';
 
+var CSRF = $("input[name='_csrf']").val();
+$.ajaxSetup({
+  beforeSend: function (xhr, settings) {
+    if (settings.crossDomain)
+      return;
+    if (settings.type == "GET")
+      return;
+    xhr.setRequestHeader('X-CSRF-Token', CSRF)
+  }
+})
+
 if(!nunjucks.env) {
   nunjucks.env = new nunjucks.Environment(new nunjucks.HttpLoader('/views'));
 }
@@ -64,11 +75,47 @@ nunjucks.env.addFilter('formatdate', function (rawDate) {
     tagName: "div",
     className: "yui-gf",
     events: {
+      'keyup input': 'checkDone',
+      'focus input': 'storeCurrent',
+      'blur input': 'saveName',
     },
 
-    /**
-     * Render this sucker.
-     */
+
+
+    storeCurrent: function (event) {
+      var $el = $(event.currentTarget);
+      $el.data('previously', $el.val());
+    },
+
+    checkDone: function (event) {
+      var $el = $(event.currentTarget);
+
+      switch (event.keyCode) {
+        // enter key, user wants to save
+        case 13:
+          $el.trigger('blur');
+          break;
+
+        // escape key, user wants to revert changes
+        case 27:
+          $el.val($el.data('previously'));
+          $el.trigger('blur');
+          break;
+      }
+    },
+
+    saveName: function (event) {
+      var $el = $(event.currentTarget)
+      var newName = $el.val()
+      var oldName = $el.data('previously')
+
+      // Bail early if the name didn't change.
+      if (newName === oldName) return;
+
+      this.model.set({ name: newName });
+      this.model.save(null, { error: errHandler });
+    },
+
     render: function () {
       this.el = template('group-template.html', this.model.attributes);
       this.setElement($(this.el));
