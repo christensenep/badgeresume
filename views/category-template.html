@@ -1,12 +1,25 @@
-<div class="yui-gf {% if loop.last %}last{% endif %}">
-    <div class="yui-u first">
-        <h2>{{ category.name }} </h2>
-    </div>
-
-    {% for class in category.classes %}
+<div class="category yui-gf" data-id="{{attributes.id}}">
+  <input class="categoryName" type="text" value="{{ attributes.name }}"/>
+  <div class="yui-u first"></div>
     <div class="yui-u">
-        <div id="{{class.name}}" class="collectiondisplay"></div>
-    </div>
-    {% endfor %}
+    <div class="collectiondisplay">
+      <table class="badgetable">
+        <tr height="15"></tr>
+        {% for row in attributes.badges.models | batch(4, 'filler') %}
+        <tr>
+          {% for badge in row %}
+          {% if badge == 'filler' %}
+          <td></td>
+          {% else %}
+          <td class="badge" draggable="true" data-id="{{ badge.attributes.id }}" align="center" style="cursor: pointer">
+            <img src="{{ badge.attributes.imageUrl }}" width="125" height="125" border="0"/><br />{{ badge.attributes.assertion.badge.name }}
+          </td>
+          {% endif %}
+          {% endfor %}
+        </tr>
+        {% endfor %}
 
+      </table>
+    </div>
+  </div>
 </div>

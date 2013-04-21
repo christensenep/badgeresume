@@ -3,9 +3,11 @@ const regex = require('../lib/regex');
 const mysql = require('../lib/mysql');
 const request = require('request');
 const configuration = require('../lib/configuration');
+const async = require('async');
 
 var Base = require('./mysql-base');
 var Category = require('./category');
+var Resume = require('./resume');
 var Badge = require('./badge');
 
 function isObject(thing) {
@@ -38,7 +40,11 @@ Base.apply(User, 'user');
 
 User.prototype.getResumeData = function(callback) {
   var resumeData = {
-    fullName : 'Erik Christensen',
+    resumeId : '',
+    fullName : '',
+    title : '',
+    email : '',
+    phone : '',
     categories : [ ],
     badges: [ ]
   };
@@ -55,7 +61,7 @@ User.prototype.getResumeData = function(callback) {
     var backpackUserID = conversionResult.userId;
 
     return Badge.getUserBadges(resumeData, userID, backpackUserID, function() {
-      Category.getUserCategories(resumeData, userID, function() {
+      Resume.getUserResume(resumeData, userID, function() {
         return callback(null, resumeData);
       });
     });
@@ -67,7 +73,30 @@ User.findOrCreate = function(email, callback) {
   User.findOne({ email: email }, function (err, user) {
     if (err) { return callback(err); }
     if (user) { return callback(null, user); }
-    else { return newUser.save(callback); }
+    else {
+      var addCategories = function(err, user) {
+        if (err) { return callback(err); }
+
+        var addCategory = function(categoryName, innerCallback) {
+          Category.findOrCreate(categoryName, user.attributes.id, function(err, category) {
+            if (err) {
+              return innerCallback(err);
+            }
+
+            innerCallback();
+          });
+        };
+
+        return async.each(['First Category', 'Second Category', 'Third Category'], addCategory, function(err) {
+          if (err) {
+            return callback(err);
+          }
+          return callback(null);
+        });
+      };
+
+      return newUser.save(addCategories);
+    }
   });
 };
 

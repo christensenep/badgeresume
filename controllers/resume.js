@@ -1,7 +1,9 @@
 const browserid = require('../lib/browserid');
 const configuration = require('../lib/configuration');
+const logger = require('../lib/logging').logger;
 
 var User = require('../models/user');
+var Resume = require('../models/resume');
 
 function showResume(request, response, resumeData)
 {
@@ -17,6 +19,12 @@ function showResume(request, response, resumeData)
           resumeData.categories[i].badges.push( { id: badge.id, imageUrl: badge.imageUrl, name: badge.assertion.badge.name } );
           break;
         }
+      }
+    }
+    else {
+      if (resumeData.categories.length > 0) {
+        badge.categoryId = resumeData.categories[0].id;
+        resumeData.categories[0].badges.push( { id: badge.id, imageUrl: badge.imageUrl, name: badge.assertion.badge.name } );
       }
     }
   });
@@ -114,6 +122,92 @@ exports.authenticate = function authenticate(req, res) {
 
     req.session.emails = [email];
     return formatResponse('/');
+  });
+};
+
+exports.findById = function findById(req, res, next, id) {
+  Resume.findById(id, function (err, resume) {
+    if (err) {
+      logger.error("Error pulling resume: " + err);
+      return res.send({
+        status: 'error',
+        error: 'Error pulling resume'
+      }, 500);
+    }
+
+    if (!resume)
+      return res.send({
+        status: 'missing',
+        error: 'Could not find resume'
+      }, 404);
+
+    req.resume = resume;
+    return next();
+  });
+};
+
+
+exports.update = function (request, response) {
+  if (!request.user)
+    return response.send({
+      status: 'forbidden',
+      error: 'user required'
+    }, 403);
+
+  if (!request.resume)
+    return response.send({
+      status: 'missing-required',
+      error: 'missing resume to update'
+    }, 404);
+
+  if (request.user.get('id') !== request.resume.get('user_id'))
+    return response.send({
+      status: 'forbidden',
+      error: 'you cannot modify a resume you do not own'
+    }, 403);
+
+  if (!request.body)
+    return response.send({
+      status: 'missing-required',
+      error: 'missing fields to update'
+    }, 400);
+
+  var resume = request.resume;
+  var body = request.body;
+
+  var sanitizeData = function(dataString) {
+    return dataString.replace('<', '&lt;').replace('>', '&gt;');
+  };
+
+  if (body.fullName) {
+    resume.set('name', sanitizeData(body.fullName));
+  }
+
+  if (body.title) {
+    resume.set('title', sanitizeData(body.title));
+  }
+
+  if (body.email) {
+    resume.set('display_email', sanitizeData(body.email));
+  }
+
+  if (body.phone) {
+    resume.set('phone', sanitizeData(body.phone));
+  }
+
+
+  resume.save(function (err) {
+    if (err) {
+      logger.debug('there was an error updating a resume:');
+      logger.debug(err);
+      return response.send({
+        status: 'error',
+        error: 'there was an unknown error. it has been logged.'
+      }, 500);
+    }
+
+    response.contentType('json');
+    response.send({status: 'okay'});
   });
 };
 

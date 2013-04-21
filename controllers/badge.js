@@ -1,25 +1,25 @@
 const logger = require('../lib/logging').logger;
 
-var Category = require('../models/category.js');
+var Badge = require('../models/badge.js');
 
 
 exports.findById = function findById(req, res, next, id) {
-  Category.findById(id, function (err, category) {
+  Badge.findById(id, function (err, badge) {
     if (err) {
-      logger.error("Error pulling category: " + err);
+      logger.error("Error pulling badge: " + err);
       return res.send({
         status: 'error',
-        error: 'Error pulling category'
+        error: 'Error pulling badge'
       }, 500);
     }
 
-    if (!category)
+    if (!badge)
       return res.send({
         status: 'missing',
-        error: 'Could not find category'
+        error: 'Could not find badge'
       }, 404);
 
-    req.category = category;
+    req.badge = badge;
     return next();
   });
 };
@@ -31,16 +31,16 @@ exports.update = function (request, response) {
       error: 'user required'
     }, 403);
 
-  if (!request.category)
+  if (!request.badge)
     return response.send({
       status: 'missing-required',
-      error: 'missing category to update'
+      error: 'missing badge to update'
     }, 404);
 
-  if (request.user.get('id') !== request.category.get('user_id'))
+  if (request.user.get('id') !== request.badge.get('user_id'))
     return response.send({
       status: 'forbidden',
-      error: 'you cannot modify a category you do not own'
+      error: 'you cannot modify a badge you do not own'
     }, 403);
 
   if (!request.body)
@@ -49,18 +49,17 @@ exports.update = function (request, response) {
       error: 'missing fields to update'
     }, 400);
 
-  var category = request.category;
+  var badge = request.badge;
   var body = request.body;
 
-  if (body.name) {
-    var saferName = body.name.replace('<', '&lt;').replace('>', '&gt;');
-    category.set('name', saferName);
+  if (body.categoryId) {
+    badge.set('category_id', body.categoryId);
   }
 
 
-  category.save(function (err) {
+  badge.save(function (err) {
     if (err) {
-      logger.debug('there was an error updating a category:');
+      logger.debug('there was an error updating a badge:');
       logger.debug(err);
       return response.send({
         status: 'error',

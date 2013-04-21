@@ -42,8 +42,11 @@ app.use(express.errorHandler());
 
 const resume = require('./controllers/resume');
 const category = require('./controllers/category');
+const badge = require('./controllers/badge');
 
 app.param('categoryId', category.findById);
+app.param('resumeId', resume.findById);
+app.param('badgeId', badge.findById);
 
 app.get('/', resume.show);
 app.get('/login', resume.login);
@@ -54,5 +57,7 @@ app.get('/resume/:userId', resume.showStatic);
 
 //app.post('/category', category.create);
 app.put('/category/:categoryId', category.update);
+app.put('/badge/:badgeId', badge.update);
+app.put('/resumeInfo/:resumeId', resume.update);
 
 app.listen(8080);
