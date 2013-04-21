@@ -60,4 +60,4 @@ app.put('/category/:categoryId', category.update);
 app.put('/badge/:badgeId', badge.update);
 app.put('/resumeInfo/:resumeId', resume.update);
 
-app.listen(8080);
+app.listen(configuration.get('port'));
